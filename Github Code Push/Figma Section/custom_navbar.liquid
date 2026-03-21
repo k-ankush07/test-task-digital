@@ -1,0 +1,593 @@
+<header class="custom-header sticky">
+    <div class="header-container page-width">
+  <div class="header-wrapper">
+
+    <!-- LEFT: Hamburger -->
+    <div class="header-left">
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <!-- CENTER: Logo -->
+    <div class="header-logo header-center">
+      <a href="{{ routes.root_url }}">
+        {% if section.settings.logo %}
+          <img src="{{ section.settings.logo | image_url }}" alt="logo">
+        {% else %}
+          {{ shop.name }}
+        {% endif %}
+      </a>
+    </div>
+
+    <!-- Desktop Menu -->
+    <nav class="header-menu">
+      <ul>
+        {% for link in linklists[section.settings.menu].links %}
+          <li class="{% if link.links != blank %}has-dropdown{% endif %}">
+            <a href="{{ link.url }}">{{ link.title }}</a>
+
+            {% if link.links != blank %}
+              <ul class="dropdown">
+                {% for child in link.links %}
+                  <li>
+                    <a href="{{ child.url }}">{{ child.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <!-- RIGHT: Icons (FULL DAWN LOGIC) -->
+    <div class="header-icons header-right">
+
+      <!-- 🌍 Localization -->
+      <div class="desktop-localization-wrapper">
+        {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
+          <localization-form class="small-hide medium-hide">
+            {%- form 'localization', id: 'HeaderCountryForm' -%}
+              {% render 'country-localization' %}
+            {%- endform -%}
+          </localization-form>
+        {% endif %}
+
+        {%- if section.settings.enable_language_selector and localization.available_languages.size > 1 -%}
+          <localization-form class="small-hide medium-hide">
+            {%- form 'localization', id: 'HeaderLanguageForm' -%}
+              {% render 'language-localization' %}
+            {%- endform -%}
+          </localization-form>
+        {%- endif -%}
+      </div>
+
+      <!-- 🔍 Search -->
+      {% render 'header-search', input_id: 'Search-In-Modal' %}
+
+      <!-- 👤 Account -->
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="header__icon account-icon">
+          <span class="svg-wrapper">{{ 'icon-account.svg' | inline_asset_content }}</span>
+        </a>
+      {%- endif -%}
+
+      <!-- 🧩 App Blocks -->
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when '@app' -%}
+            {% render block %}
+        {%- endcase -%}
+      {%- endfor -%}
+
+      <!-- 🛒 Cart -->
+      <a 
+  href="{{ routes.cart_url }}" 
+  class="header__icon header__icon--cart js-cart-toggle" 
+  id="cart-icon-bubble"
+>
+  {% if cart == empty %}
+    <span class="svg-wrapper">{{ 'icon-cart-empty.svg' | inline_asset_content }}</span>
+  {% else %}
+    <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
+  {% endif %}
+
+  {% if cart != empty %}
+    <div class="cart-count-bubble">
+      <span>{{ cart.item_count }}</span>
+    </div>
+  {% endif %}
+</a>
+
+    </div>
+
+  </div>
+
+  <!-- Mobile Menu -->
+<!-- MOBILE DRAWER -->
+<div class="mobile-menu">
+
+  <!-- Close Button -->
+  <div class="menu-header">
+    <button class="menu-close">✕</button>
+  </div>
+
+  <ul>
+    {% for link in linklists[section.settings.menu].links %}
+      <li>
+        <a href="{{ link.url }}">{{ link.title }}</a>
+
+        {% if link.links != blank %}
+          <ul>
+            {% for child in link.links %}
+              <li><a href="{{ child.url }}">{{ child.title }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+</div>
+
+<!-- OVERLAY -->
+<div class="mobile-overlay"></div>
+
+  <!-- 🔥 REQUIRED DAWN COMPONENTS -->
+
+  {% render 'cart-drawer' %}
+
+</header>
+  {% schema %}
+{
+  "name": "Custom_header",
+  "settings": [
+     {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+
+   
+    
+  ],
+  "presets": [
+    {
+      "name": "Custom Header"
+    }
+  ]
+}
+{% endschema %}
+
+
+<style>
+    {% comment %} .custom-header {
+ position: absolute;
+    width: 100%;
+    top: 30px;
+} {% endcomment %}
+/* ALWAYS STICKY */
+.custom-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  transition: all 0.3s ease;
+}
+
+/* ===============================
+   DEFAULT (ON LOAD → BOXED)
+================================= */
+.header-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding-top: 60px;
+  transition: all 0.3s ease;
+  padding-bottom: 0;
+}
+
+.header-wrapper {
+  border-radius: 40px;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(10px);
+  padding: 13px 30px;
+  transition: all 0.3s ease;
+}
+
+/* ===============================
+   ON SCROLL → FULL WIDTH
+================================= */
+.custom-header.full-width .header-container {
+  max-width: 100%;
+  padding: 0;
+}
+
+.custom-header.full-width .header-wrapper {
+  border-radius: 0;
+  background: #EEF5F8;
+  box-shadow: none;
+}
+
+.custom-header.sticky .header-wrapper {
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(10px);
+}
+
+.custom-header.sticky .header-wrapper {
+  transform: translateY(0);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+{% comment %} .custom-header.sticky .header-container {
+  max-width: 1440px;
+      padding-top: 30px;
+  margin: 0 auto;
+} {% endcomment %}
+
+.custom-header {
+  position: relative;
+  width: 100%;
+  z-index: 999;
+  transition: all 0.3s ease;
+}
+
+.custom-header.sticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+ 
+}
+ .header-wrapper {
+ display: grid;
+    border-radius: 40px;
+    padding: 13px 30px;
+    background: #EEF5F8;
+    align-items: center;
+    justify-content: space-between;
+    grid-template-columns: 0 1fr auto 1fr;
+}
+ .header-icons.header-right {
+    display: flex;
+    justify-content: flex-end;
+}
+ .header-logo img {
+ width: 120px;
+}
+ .header-logo.header-center a {
+    display: flex;
+}
+/* Desktop Menu */
+ .header-menu ul {
+ display: flex;
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    justify-content: center;
+}
+
+ .header-menu a {
+text-decoration: none;
+    font-family: 'Nunito Sans';
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 25px;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    color: #03334D;
+}
+ .header__icon .icon {
+  
+    color: #03334D;
+}
+/* Dropdown */
+ .has-dropdown {
+  position: relative;
+}
+
+ .dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  display: none;
+  padding: 10px;
+}
+
+ .has-dropdown:hover .dropdown {
+  display: block;
+}
+
+/* Icons */
+ .header-icons a {
+  margin-left: 15px;
+}
+
+ .hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+ .hamburger span {
+height: 2px;
+        width: 16px;
+        background: #03334D;
+        margin: 2px 0;
+        opacity: 1;
+        border-radius: 9px;
+}
+
+/* Mobile Menu */
+/* DRAWER MENU */
+ .mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100vh;
+  background: #ffffff;
+  padding: 20px;
+
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+
+  z-index: 9999;
+  overflow-y: auto;
+}
+
+/* OPEN STATE */
+ .mobile-menu.active {
+  transform: translateX(0);
+}
+
+/* CLOSE BUTTON */
+ .menu-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+ .menu-close {
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* MENU STYLE */
+ .mobile-menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+ .mobile-menu li {
+  margin-bottom: 12px;
+}
+
+ .mobile-menu a {
+  text-decoration: none;
+  color: #03334D;
+  font-size: 16px;
+  font-family: 'Nunito Sans';
+}
+
+/* OVERLAY */
+ .mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+
+  z-index: 9998;
+}
+
+ .mobile-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+cart-drawer[open] {
+  pointer-events: auto;
+}
+.header-container {
+  transition: max-width 0.35s ease, padding 0.35s ease;
+}
+
+.header-wrapper {
+  transition: all 0.35s ease;
+}
+.custom-header .header__icon .svg-wrapper svg {
+    width: 18.55px;
+}
+.custom-header .header-wrapper {
+  margin: 0;
+  
+}
+
+/* SCROLLED → BOXED */
+.custom-header.scrolled .header-wrapper {
+  margin: 0 20px;
+  border-radius: 40px;
+}
+
+
+@media (max-width: 1440px) {
+header.custom-header .header-wrapper {
+    margin: 0 0px;
+}
+
+header.custom-header.sticky.full-width .header-wrapper {
+    margin: 0;
+}
+.header-menu a {
+      font-size: 14px;
+    line-height: 18px;
+   
+}
+
+}
+@media (max-width: 1280px) {
+.header-menu ul {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+    margin: 0;
+    justify-content: center;
+    padding: 0;
+}
+}
+@media (max-width: 1150px) {
+.header-menu ul {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 16px;
+    row-gap: 1px;
+    padding-left: 20px;
+}
+.custom_nav_banner .page_warpper .image_text .content_block {
+   
+    padding-top: 120px;
+}
+}
+
+@media (max-width: 1024px) {
+  .header-menu {
+    display: none;
+  }
+.custom-header .header-icons.header-right a.header__icon.account-icon {
+    display: none;
+}
+  .custom-header .hamburger {
+    display: flex;
+  }
+     .custom-header .header-wrapper {
+        padding: 12px 30px;
+        grid-template-columns: 1fr 0fr 1fr;
+        
+    }
+.custom-header .header__icon {
+    height: 2.4rem;
+    width: 2.4rem;
+}
+
+
+}
+
+
+
+@media (max-width: 400px) {
+
+.header-logo img {
+    width: 80px;
+}
+.hamburger span {
+   height: 2px;
+        width: 16px;
+        background: #03334D;
+        margin: 2px 0;
+        opacity: 1;
+        border-radius: 9px;
+}
+
+}
+
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const header = document.querySelector('.custom-header');
+  if (!header) return;
+
+  // 👇 default state (boxed)
+  header.classList.remove('full-width');
+
+  window.addEventListener('scroll', function () {
+
+    const scrollTop = window.scrollY;
+
+    // 👉 small scroll trigger (10px or adjust)
+    if (scrollTop > 50) {
+      header.classList.add('full-width');   // 🔥 expand
+    } else {
+      header.classList.remove('full-width'); // 🔥 boxed again
+    }
+
+  });
+
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  const hamburger = document.querySelector('.hamburger');
+  const mobileMenu = document.querySelector('.mobile-menu');
+  const overlay = document.querySelector('.mobile-overlay');
+  const closeBtn = document.querySelector('.menu-close');
+
+  if (!hamburger || !mobileMenu) return;
+
+  // OPEN MENU
+  hamburger.addEventListener('click', function () {
+    mobileMenu.classList.add('active');
+    overlay.classList.add('active');
+  });
+
+  // CLOSE MENU (CROSS BUTTON)
+  closeBtn.addEventListener('click', function () {
+    mobileMenu.classList.remove('active');
+    overlay.classList.remove('active');
+  });
+
+  // CLOSE ON OVERLAY CLICK
+  overlay.addEventListener('click', function () {
+    mobileMenu.classList.remove('active');
+    overlay.classList.remove('active');
+  });
+
+});
+</script>
+<script>let lastScroll = 0;
+
+window.addEventListener('scroll', function () {
+  const currentScroll = window.scrollY;
+
+  if (currentScroll > lastScroll && currentScroll > 100) {
+    header.style.transform = "translateY(-100%)"; // hide
+  } else {
+    header.style.transform = "translateY(0)"; // show
+  }
+
+  lastScroll = currentScroll;
+});
+
+</script>
+
+
