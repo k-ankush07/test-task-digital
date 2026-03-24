@@ -1,194 +1,83 @@
-<section class="custom_nav_banner">
-    <div class="page-width">
-        <div class="page_warpper">
-{% comment %} 
-<header class="custom-header">
-  <div class="header-wrapper">
+{{ 'custom-banner.js' | asset_url | script_tag }}
 
-    <!-- LEFT: Hamburger -->
-    <div class="header-left">
-      <div class="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </div>
 
-    <!-- CENTER: Logo -->
-    <div class="header-logo header-center">
-      <a href="{{ routes.root_url }}">
-        {% if section.settings.logo %}
-          <img src="{{ section.settings.logo | image_url }}" alt="logo">
-        {% else %}
-          {{ shop.name }}
-        {% endif %}
-      </a>
-    </div>
+<section class="custom_nav_banner" id="{{section.id}}" >
 
-    <!-- Desktop Menu -->
-    <nav class="header-menu">
-      <ul>
-        {% for link in linklists[section.settings.menu].links %}
-          <li class="{% if link.links != blank %}has-dropdown{% endif %}">
-            <a href="{{ link.url }}">{{ link.title }}</a>
 
-            {% if link.links != blank %}
-              <ul class="dropdown">
-                {% for child in link.links %}
-                  <li>
-                    <a href="{{ child.url }}">{{ child.title }}</a>
-                  </li>
-                {% endfor %}
-              </ul>
+  <div
+    class="banner-overlay"
+    style="
+      background: {{ section.settings.overlay_color }};
+      opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    "
+  ></div>
+
+
+  <div class="page-width">
+    <div class="page_warpper">
+
+
+      <div class="image_text">
+
+
+        <div class="content_block">
+
+
+          <h2 class="hero-heading">
+            {{ section.settings.heading_text }}
+            <span
+              class="highlight-text"
+              style="color: {{ section.settings.highlight_color }};"
+            >
+              {{ section.settings.highlight_text }}
+            </span>
+          </h2>
+
+
+          <p class="hero-subtext">
+            {{ section.settings.subtext }}
+          </p>
+
+
+          {% if section.settings.button_text != blank %}
+            <a href="{{ section.settings.button_link }}" class="bundle-btn">
+              {{ section.settings.button_text }}
+            </a>
+          {% endif %}
+
+
+        </div>
+
+
+        <div class="data_images_block">
+          <div class="image_block">
+            {% if section.settings.main_data_image != blank %}
+              <img class="data_image" src="{{ section.settings.main_data_image | img_url: 'master' }}">
             {% endif %}
-          </li>
-        {% endfor %}
-      </ul>
-    </nav>
+          </div>
 
-    <!-- RIGHT: Icons (FULL DAWN LOGIC) -->
-    <div class="header-icons header-right">
 
-      <!-- 🌍 Localization -->
-      <div class="desktop-localization-wrapper">
-        {%- if section.settings.enable_country_selector and localization.available_countries.size > 1 -%}
-          <localization-form class="small-hide medium-hide">
-            {%- form 'localization', id: 'HeaderCountryForm' -%}
-              {% render 'country-localization' %}
-            {%- endform -%}
-          </localization-form>
-        {% endif %}
+          <div class="mobile_view" style="display: none;">
+            {% if section.settings.mobile_view != blank %}
+              <img class="data_images" src="{{ section.settings.mobile_view | img_url: 'master' }}">
+            {% endif %}
+          </div>
+        </div>
 
-        {%- if section.settings.enable_language_selector and localization.available_languages.size > 1 -%}
-          <localization-form class="small-hide medium-hide">
-            {%- form 'localization', id: 'HeaderLanguageForm' -%}
-              {% render 'language-localization' %}
-            {%- endform -%}
-          </localization-form>
-        {%- endif -%}
+
       </div>
 
-      <!-- 🔍 Search -->
-      {% render 'header-search', input_id: 'Search-In-Modal' %}
-
-      <!-- 👤 Account -->
-      {%- if shop.customer_accounts_enabled -%}
-        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="header__icon account-icon">
-          <span class="svg-wrapper">{{ 'icon-account.svg' | inline_asset_content }}</span>
-        </a>
-      {%- endif -%}
-
-      <!-- 🧩 App Blocks -->
-      {%- for block in section.blocks -%}
-        {%- case block.type -%}
-          {%- when '@app' -%}
-            {% render block %}
-        {%- endcase -%}
-      {%- endfor -%}
-
-      <!-- 🛒 Cart -->
-      <a 
-  href="{{ routes.cart_url }}" 
-  class="header__icon header__icon--cart js-cart-toggle" 
-  id="cart-icon-bubble"
->
-  {% if cart == empty %}
-    <span class="svg-wrapper">{{ 'icon-cart-empty.svg' | inline_asset_content }}</span>
-  {% else %}
-    <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
-  {% endif %}
-
-  {% if cart != empty %}
-    <div class="cart-count-bubble">
-      <span>{{ cart.item_count }}</span>
-    </div>
-  {% endif %}
-</a>
 
     </div>
-
   </div>
+</section>
 
-  <!-- Mobile Menu -->
-<!-- MOBILE DRAWER -->
-<div class="mobile-menu">
-
-  <!-- Close Button -->
-  <div class="menu-header">
-    <button class="menu-close">✕</button>
-  </div>
-
-  <ul>
-    {% for link in linklists[section.settings.menu].links %}
-      <li>
-        <a href="{{ link.url }}">{{ link.title }}</a>
-
-        {% if link.links != blank %}
-          <ul>
-            {% for child in link.links %}
-              <li><a href="{{ child.url }}">{{ child.title }}</a></li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
-
-</div>
-
-<!-- OVERLAY -->
-<div class="mobile-overlay"></div>
-
-  <!-- 🔥 REQUIRED DAWN COMPONENTS -->
-
-  {% render 'cart-drawer' %}
-
-</header> {% endcomment %}
-
-<div class="image_text">
-
-<div class="content_block">
-
-<h2 class="hero-heading">
-  {{ section.settings.heading_text }}
-  <span 
-    class="highlight-text"
-    style="color: {{ section.settings.highlight_color }};"
-  >
-    {{ section.settings.highlight_text }}
-  </span>
-</h2>
-
-  <p class="hero-subtext">
-    {{ section.settings.subtext }}
-  </p>
-
-</div>
-
-
-
-<div class="data_images_block">
-<div class="image_block">
-{% if section.settings.main_data_image != blank %}
-<img class="data_image" src="{{ section.settings.main_data_image | img_url: 'master' }}">
-{% endif %}
-</div>
-<div class="mobile_view" style="display: none;">
-{% if section.settings.mobile_view != blank %}
-<img class="data_images" src="{{ section.settings.mobile_view | img_url: 'master' }}">
-{% endif %}
-</div>
-</div>
-</div>
-            </div>
-            </div>
-            </section>
 
             {% schema %}
 {
-  "name": "Custom Nav Banner",
+  "name": "Bundle Banner Section",
   "settings": [
-    
+   
      {
       "type": "image_picker",
       "id": "logo",
@@ -200,6 +89,7 @@
       "label": "Menu",
       "default": "main-menu"
     },
+
 
     {
       "type": "textarea",
@@ -235,62 +125,176 @@
       "id": "mobile_view",
       "label": "Main Mobile Image"
     },
+    {
+  "type": "text",
+  "id": "button_text",
+  "label": "Button Text",
+  "default": "Shop Now"
+},
+{
+  "type": "url",
+  "id": "button_link",
+  "label": "Button Link"
+},
+{
+  "type": "color",
+  "id": "btn_bg",
+  "label": "Button Background",
+  "default": "#00bcd4"
+},
+{
+  "type": "color",
+  "id": "btn_text",
+  "label": "Button Text Color",
+  "default": "#ffffff"
+},
+{
+  "type": "color",
+  "id": "btn_hover_bg",
+  "label": "Button Hover Background",
+  "default": "#0097a7"
+},
+{
+  "type": "image_picker",
+  "id": "bg_image",
+  "label": "Background Image (Desktop)"
+},
+{
+  "type": "image_picker",
+  "id": "bg_image_mobile",
+  "label": "Background Image (Mobile)"
+},
+{
+  "type": "color",
+  "id": "overlay_color",
+  "label": "Overlay Color",
+  "default": "#000000"
+},
+{
+  "type": "range",
+  "id": "overlay_opacity",
+  "label": "Overlay Opacity",
+  "min": 0,
+  "max": 100,
+  "step": 5,
+  "default": 40
+}
   ],
   "presets": [
     {
-      "name": "Custom Nav Banner"
+      "name": "Bundle Banner Section"
     }
   ]
 }
 {% endschema %}
 
 
- <style>
+
+
+
+
+
+
+<style>
  
-.custom_nav_banner {
+   #{{section.id}}.custom_nav_banner {
     width: 100%;
     position: relative;
-    background: #082D35;
-        border-bottom-left-radius: 30px;
-         border-bottom-right-radius: 30px;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    overflow: hidden;
 }
-.custom_nav_banner .page-width {
+
+
+
+
+
+
+/* Overlay */
+#{{section.id}}.custom_nav_banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: {{ section.settings.overlay_color }};
+    opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    z-index: 1;
+}
+
+
+/* Keep content above overlay */
+#{{section.id}}.custom_nav_banner .page-width {
+    position: relative;
+    z-index: 2;
+}
+
+
+
+
+  #{{section.id}} .bundle-btn {
+    display: inline-block;
+    padding: 14px 30px;
+    background: {{ section.settings.btn_bg }};
+    color: {{ section.settings.btn_text }};
+    border-radius: 50px;
+    text-decoration: none;
+    font-family: 'Nunito Sans';
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: fit-content;
+}
+
+
+#{{section.id}} .bundle-btn:hover {
+    background: {{ section.settings.btn_hover_bg }};
+    color: {{ section.settings.btn_hover_text }};
+    transform: translateY(-2px);
+}
+ 
+#{{section.id}} .custom_nav_banner {
+    width: 100%;
+    position: relative;
+    background: #000;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+}
+#{{section.id}}.custom_nav_banner .page-width {
     max-width: 1440px !important;
-    
+   
 }
-.custom_nav_banner .page_warpper {
+#{{section.id}}.custom_nav_banner .page_warpper {
     width: 100%;
     position: relative;
 }
-.custom_nav_banner .page_warpper .image_text {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text {
     display: flex;
     align-items: center;
     width: 100%;
     justify-content: space-between;
-    width: calc(100vw - ((101vw - 100%) / 2));
+    width: calc(100vw - ((100vw - 100%) / 2));
     margin-right: calc(48% - 50vw);
     overflow: visible;
 }
-.custom_nav_banner .page_warpper .image_text .content_block {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
     width: 38%;
     display: flex;
     flex-direction: column;
     gap: 20px;
     padding-top: 50px;
 }
-.custom_nav_banner .page_warpper .image_text .data_images_block {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block {
     width: 62%;
 }
-.custom_nav_banner .page_warpper .image_text .data_images_block .image_block {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block .image_block {
     width: 100%;
     font-size: 0;
 }
-.custom_nav_banner .page_warpper .image_text .data_images_block .image_block img.data_image {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block .image_block img.data_image {
     width: 100%;
     display: block;
         border-bottom-right-radius: 30px;
 }
-.custom_nav_banner .page_warpper .image_text .content_block h2.hero-heading {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block h2.hero-heading {
     font-family: 'Libre Baskerville';
     font-weight: 400;
     font-size: 38px;
@@ -301,7 +305,7 @@
     margin: 0;
     max-width: 470px;
 }
-.custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
     margin: 0;
     font-family: 'Nunito Sans';
     font-weight: 400;
@@ -318,6 +322,7 @@
   transition: all 0.3s ease;
 }
 
+
 .mobile-menu.active ul li {
   opacity: 1;
   transform: translateX(0);
@@ -331,23 +336,30 @@ content: unset;
 }
 .custom-header .search-modal.modal__content.gradient .field::after {
   content: '';
-  border-radius:100px; 
+  border-radius:100px;
 }
 .custom-header .search-modal.modal__content.gradient .field input {
     border-radius: 100px;
 }
+@media (min-width: 1700px) {
 
+
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block {
+    width: 100%;
+}
+}
 @media (max-width: 1440px) {
-.custom_nav_banner .page_warpper .image_text .content_block {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
     width: 45%;
    
 }
-.custom_nav_banner .page_warpper .image_text {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text {
+
 
     width: calc(100vw - ((100vw - 100%) / 2));
    
 }
-.custom_nav_banner .page_warpper .image_text .data_images_block {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block {
     width: 55%;
 }
     .custom_nav_banner .header-wrapper {
@@ -355,157 +367,140 @@ content: unset;
         margin: 0px 20px;
     }
 
+
+}
+
+
+
+
+@media (max-width: 1024px) {
+
+
+
+
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block h2.hero-heading {
+    font-size: 32px;
+      line-height: 35px;
+   
+}
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
+        font-size: 18px;
+    line-height: 22px;
+   }
 }
 @media (max-width: 1095px) {
-.custom_nav_banner .page_warpper .image_text .content_block {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
    
     padding-top: 120px;
 }
 }
 
-@media (max-width: 1024px) {
-
-
-.custom_nav_banner .page_warpper .image_text .content_block h2.hero-heading {
-    font-size: 32px;
-      line-height: 35px;
-    
-}
-.custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
-        font-size: 18px;
-    line-height: 22px;
-   }
-}
 
 @media (max-width: 989px) {
-.custom_nav_banner .page_warpper .image_text {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text {
     flex-direction: column-reverse;
     width: 100%;
 }
-    .custom_nav_banner .page_warpper .image_text .content_block {
+    #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
                 width: 100%;
         padding: 0px 20px;
        margin: -80px;
         padding-bottom: 120px;
     }
-.custom_nav_banner .page_warpper .image_text .data_images_block .image_block {
-    
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block .image_block {
+   
     display: none;
 }
-.custom_nav_banner .page_warpper .image_text .data_images_block .mobile_view {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block .mobile_view {
     display: inline-block !important;
 }
-.custom_nav_banner .page_warpper .image_text .data_images_block .mobile_view img.data_images {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block .mobile_view img.data_images {
     width: 100%;
     display: inline-flex;
 }
-.custom_nav_banner .page_warpper .image_text .data_images_block {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block {
         width: 100%;
     }
-    .custom_nav_banner {
+    #{{section.id}}.custom_nav_banner {
     border-radius: unset;
 }
 }
 
+
 @media (max-width: 768px) {
 
-    .custom_nav_banner .page-width {
+
+  #{{section.id}}.custom_nav_banner{
+        border-bottom-left-radius: 0px !important;
+     border-bottom-right-radius: 0px !important;
+  }
+
+
+    #{{section.id}}.custom_nav_banner .page-width {
     max-width: 1440px !important;
     padding: 0;
 }
-.custom_nav_banner .page_warpper .image_text .content_block h2.hero-heading {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block h2.hero-heading {
         font-size: 28px!important;
         line-height: 29px;
         max-width: 370px !important;
     }
-        .custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
-  
+        #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
+ 
     max-width: 390px;
 }
+
+
+#{{section.id}}.custom_nav_banner-version-3 .page_warpper .image_text .content_block{
+width:85% !important;
 }
+}
+
+
 
 
 @media (max-width: 500px) {
-    .custom_nav_banner .page_warpper .image_text .content_block {
+    #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
         width: 100%;
      margin: -70px;
     }
-    .custom_nav_banner .page_warpper .image_text .content_block {
+    #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
        
         padding-bottom: 100px;
     }
-        .custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
+       #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
         font-size: 16px;
         line-height: 20px;
     }
   }
-</style>
 
 
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-
-  const hamburger = document.querySelector('.hamburger');
-  const mobileMenu = document.querySelector('.mobile-menu');
-  const overlay = document.querySelector('.mobile-overlay');
-  const closeBtn = document.querySelector('.menu-close');
-
-  if (!hamburger || !mobileMenu) return;
-
-  // OPEN MENU
-  hamburger.addEventListener('click', function () {
-    mobileMenu.classList.add('active');
-    overlay.classList.add('active');
-  });
-
-  // CLOSE MENU (CROSS BUTTON)
-  closeBtn.addEventListener('click', function () {
-    mobileMenu.classList.remove('active');
-    overlay.classList.remove('active');
-  });
-
-  // CLOSE ON OVERLAY CLICK
-  overlay.addEventListener('click', function () {
-    mobileMenu.classList.remove('active');
-    overlay.classList.remove('active');
-  });
-
-});
-</script>
 
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
 
-  const cartBtn = document.querySelector('.js-cart-toggle');
+  #{{section.id}}.custom_nav_banner {
+    position: relative;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    overflow: hidden;
+}
 
-  if (!cartBtn) return;
 
-  cartBtn.addEventListener('click', function (e) {
+/* Overlay */
+#{{section.id}} .banner-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
 
-    // 🚫 stop default + duplicate triggers
-    e.preventDefault();
-    e.stopImmediatePropagation();
 
-    // ✅ prevent double click spam
-    if (cartBtn.classList.contains('opening')) return;
-    cartBtn.classList.add('opening');
+/* Content above overlay */
+#{{section.id}}.custom_nav_banner .page-width {
+    position: relative;
+    z-index: 2;
+}
 
-    const drawer = document.querySelector('cart-drawer');
 
-    if (drawer) {
-      drawer.open(); // Dawn method
-    } else {
-      console.warn('Cart drawer not found');
-    }
+  </style>
 
-    // remove lock after animation
-    setTimeout(() => {
-      cartBtn.classList.remove('opening');
-    }, 500);
-
-  }, true); // 🔥 capture phase (important)
-
-});
-</script>
