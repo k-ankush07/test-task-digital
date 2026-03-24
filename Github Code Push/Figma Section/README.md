@@ -2,6 +2,18 @@
 
 Hero banner section for bundle landing pages. Fully configurable via the Shopify Theme Editor.
 
+
+
+## Approach
+
+The goal was to build a custom Shopify banner section for a bundle page A/B test using Intelligems.
+
+A custom-banner.liquid section was created with full Theme Editor controls — heading, CTA, images, overlay — so the client can manage content without touching code.
+The section is included in the **Control URL** of the Intelligems test, while the Variation runs the same bundle pack without it — keeping the test clean and isolated.
+**Add to Cart Rate** and **Revenue Per Session** are tracked as metrics to measure whether the banner drives more conversions.
+Responsive fixes ensure the layout works across all screen sizes, with a dedicated mobile image.
+All changes (alt tags, CTA, responsive fixes) were made directly in the section file to keep the codebase minimal and easy to maintain.
+
 ---
 
 ## Files
