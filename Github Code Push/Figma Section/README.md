@@ -18,7 +18,12 @@ The goal was to build a custom Shopify banner section for a bundle page A/B test
 
 ## Files
 - `custom-banner.liquid` — Section markup, styles, and schema
-- `custom_navbar.liquid` — Custom navigation bar section
+- `custom_nav_banner.liquid` — Custom navigation bar section
+
+#URL Targeting Rules Followed( Only worked Product Page ):
+
+Include: /products/*
+Exclude: Homepage (/), Collection pages (/collections/*)
 
 ---
 
@@ -70,16 +75,14 @@ The goal was to build a custom Shopify banner section for a bundle page A/B test
 
 ---
 
-## GitHub Repository
 
-🔗 [Repository Link](#) ← *(replace with actual URL)*
 
 ### Folder Structure
 ```
 /
 ├── sections/
 │   ├── custom-banner.liquid
-│   └── custom_navbar.liquid
+│   └── custom_nav_banner.liquid
 └── README.md
 ```
 

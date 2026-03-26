@@ -1,19 +1,26 @@
-{{ 'custom-banner.js' | asset_url | script_tag }}
+
+
 
 
 <section class="custom_nav_banner" id="{{section.id}}" >
 
 
-  <div
-    class="banner-overlay"
-    style="
-      background: {{ section.settings.overlay_color }};
-      opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
-    "
-  ></div>
+   <div class="data_images_block">
+    <div class="image_data">
+          <div class="image_block">
+            {% if section.settings.main_data_image != blank %}
+              <img class="data_image" src="{{ section.settings.main_data_image | img_url: 'master' }}" alt="{{ section.settings.main_data_image.alt }}">
+            {% endif %}
+          </div>
 
 
-  <div class="page-width">
+          <div class="mobile_view" style="display: none;">
+            {% if section.settings.mobile_view != blank %}
+              <img class="data_images" src="{{ section.settings.mobile_view | img_url: 'master' }}" alt="{{ section.settings.mobile_view.alt }}">
+            {% endif %}
+          </div>
+          </div>
+            <div class="page-width">
     <div class="page_warpper">
 
 
@@ -23,7 +30,7 @@
         <div class="content_block">
 
 
-          <h2 class="hero-heading">
+          <h1 class="hero-heading">
             {{ section.settings.heading_text }}
             <span
               class="highlight-text"
@@ -31,12 +38,12 @@
             >
               {{ section.settings.highlight_text }}
             </span>
-          </h2>
-
-
+          </h1>
+          {%  if section.settings.subtext != blank %}
           <p class="hero-subtext">
             {{ section.settings.subtext }}
           </p>
+        {% endif %}
 
 
           {% if section.settings.button_text != blank %}
@@ -47,50 +54,35 @@
 
 
         </div>
-
-
-        <div class="data_images_block">
-          <div class="image_block">
-            {% if section.settings.main_data_image != blank %}
-              <img class="data_image" src="{{ section.settings.main_data_image | img_url: 'master' }}">
-            {% endif %}
-          </div>
-
-
-          <div class="mobile_view" style="display: none;">
-            {% if section.settings.mobile_view != blank %}
-              <img class="data_images" src="{{ section.settings.mobile_view | img_url: 'master' }}">
-            {% endif %}
-          </div>
-        </div>
-
-
       </div>
 
 
     </div>
   </div>
+
+
+        </div>
+
+
+
+
 </section>
 
 
-            {% schema %}
+ {% schema %}
 {
   "name": "Bundle Banner Section",
   "settings": [
-   
-     {
+{
       "type": "image_picker",
-      "id": "logo",
-      "label": "Logo"
+      "id": "main_data_image",
+      "label": "Main Image"
     },
     {
-      "type": "link_list",
-      "id": "menu",
-      "label": "Menu",
-      "default": "main-menu"
+      "type": "image_picker",
+      "id": "mobile_view",
+      "label": "Main Mobile Image"
     },
-
-
     {
       "type": "textarea",
       "id": "heading_text",
@@ -115,16 +107,7 @@
       "label": "Highlight Color",
       "default": "#00bcd4"
     },
-    {
-      "type": "image_picker",
-      "id": "main_data_image",
-      "label": "Main Image"
-    },
-    {
-      "type": "image_picker",
-      "id": "mobile_view",
-      "label": "Main Mobile Image"
-    },
+   
     {
   "type": "text",
   "id": "button_text",
@@ -206,8 +189,9 @@
 }
 
 
-
-
+#{{section.id}} .image_block {
+    font-size: 0;
+}
 
 
 /* Overlay */
@@ -223,11 +207,16 @@
 
 /* Keep content above overlay */
 #{{section.id}}.custom_nav_banner .page-width {
-    position: relative;
-    z-index: 2;
+   position: absolute;
+    z-index: 9999;
+    inset: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }
-
-
+#{{section.id}} .data_images_block {
+    position: relative;
+}
 
 
   #{{section.id}} .bundle-btn {
@@ -266,15 +255,10 @@
     width: 100%;
     position: relative;
 }
-#{{section.id}}.custom_nav_banner .page_warpper .image_text {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    justify-content: space-between;
-    width: calc(100vw - ((100vw - 100%) / 2));
-    margin-right: calc(48% - 50vw);
-    overflow: visible;
-}
+
+
+
+
 #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
     width: 38%;
     display: flex;
@@ -294,7 +278,7 @@
     display: block;
         border-bottom-right-radius: 30px;
 }
-#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block h2.hero-heading {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block h1.hero-heading {
     font-family: 'Libre Baskerville';
     font-weight: 400;
     font-size: 38px;
@@ -309,7 +293,7 @@
     margin: 0;
     font-family: 'Nunito Sans';
     font-weight: 400;
-    font-size: 24px;
+    font-size: 23px;
     line-height: 30px;
     letter-spacing: 0%;
     vertical-align: middle;
@@ -341,6 +325,18 @@ content: unset;
 .custom-header .search-modal.modal__content.gradient .field input {
     border-radius: 100px;
 }
+
+
+#{{section.id}} img.data_image {
+    position: relative;
+    width: 100%;
+    background-position: center;
+    background-repeat: repeat;
+    background-size: cover;
+    z-index: 999;
+}
+
+
 @media (min-width: 1700px) {
 
 
@@ -353,32 +349,56 @@ content: unset;
     width: 45%;
    
 }
-#{{section.id}}.custom_nav_banner .page_warpper .image_text {
 
 
-    width: calc(100vw - ((100vw - 100%) / 2));
-   
-}
 #{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block {
     width: 55%;
 }
-    .custom_nav_banner .header-wrapper {
+    #{{section.id}}.custom_nav_banner .header-wrapper {
        
         margin: 0px 20px;
     }
 
 
 }
+@media (max-width: 1280px) {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
 
 
+    gap: 10px;
+    padding-top: 80px;
+}
+}
+@media (max-width: 1170px) {
+#{{section.id}} img.data_image {
+      min-height: 420px;
+    object-fit: cover;
+    object-position: 99%;
 
 
+}
+}
+@media (max-width: 1050px) {
+  {% comment %} #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
+        padding-top: 50px;
+    } {% endcomment %}
+
+
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
+        width: 55%;
+    }
+  }
 @media (max-width: 1024px) {
+#{{section.id}} img.data_image {
 
 
+         min-height: 355px;
+        object-fit: cover;
+        object-position: 30%;
+      }
 
 
-#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block h2.hero-heading {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block h1.hero-heading {
     font-size: 32px;
       line-height: 35px;
    
@@ -386,37 +406,55 @@ content: unset;
 #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
         font-size: 18px;
     line-height: 22px;
+        max-width: 420px;
+
+
    }
-}
-@media (max-width: 1095px) {
-#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
+
+
    
-    padding-top: 120px;
 }
-}
+
+
+
+
+
+
+
+
 
 
 @media (max-width: 989px) {
+  #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
+
+
+        max-width: 390px;
+
+
+   }
+
+
+
+
 #{{section.id}}.custom_nav_banner .page_warpper .image_text {
     flex-direction: column-reverse;
     width: 100%;
 }
-    #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
-                width: 100%;
-        padding: 0px 20px;
-       margin: -80px;
-        padding-bottom: 120px;
-    }
+
+
 #{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block .image_block {
    
     display: none;
 }
 #{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block .mobile_view {
     display: inline-block !important;
+    width:100%;
 }
 #{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block .mobile_view img.data_images {
     width: 100%;
     display: inline-flex;
+
+
 }
 #{{section.id}}.custom_nav_banner .page_warpper .image_text .data_images_block {
         width: 100%;
@@ -427,56 +465,158 @@ content: unset;
 }
 
 
+@media (max-width: 840px) {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
+     
+        max-width: 490px;
+
+
+   }
+
+
+#{{section.id}} .data_images_block .mobile_view {
+    display: inline-block !important;
+}
+#{{section.id}} .data_images_block .image_block {
+    display: none;
+}
+#{{section.id}}.custom_nav_banner .page-width {
+    align-items: flex-end !important;
+}
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
+    padding-top: 0px !important;
+        width: 100%!important;
+    padding-bottom: 50px;
+            gap: 20px;
+}
+
+
+.data_images_block .mobile_view img.data_images {
+    display: flex;
+    position: relative;
+    width: 100%;
+    background-position: center;
+    background-repeat: repeat;
+    background-size: cover;
+    z-index: 999;
+}
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block h1.hero-heading {
+               font-size: 38px !important;
+        line-height: 39px;
+        max-width: 550px !important;
+    }
+}
+
+
 @media (max-width: 768px) {
 
 
   #{{section.id}}.custom_nav_banner{
-        border-bottom-left-radius: 0px !important;
+     border-bottom-left-radius: 0px !important;
      border-bottom-right-radius: 0px !important;
   }
 
 
     #{{section.id}}.custom_nav_banner .page-width {
     max-width: 1440px !important;
-    padding: 0;
+ 
 }
-#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block h2.hero-heading {
+#{{section.id}} .custom_nav_banner .content_block {
+    width: 55% !important;
+}
+
+
+  #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
+    max-width: 400px;
+}
+
+
+  #{{section.id}}.custom_nav_banner-version-3 .page_warpper .image_text .content_block{
+    width:85% !important;
+  }
+
+
+}
+@media (max-width: 600px) {
+#{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
+ 
+    padding-bottom: 20px;
+}
+}
+@media (max-width: 540px) {
+  #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block h1.hero-heading {
         font-size: 28px!important;
         line-height: 29px;
         max-width: 370px !important;
     }
-        #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
- 
-    max-width: 390px;
-}
-
-
-#{{section.id}}.custom_nav_banner-version-3 .page_warpper .image_text .content_block{
-width:85% !important;
-}
-}
-
-
-
-
+  }
 @media (max-width: 500px) {
+
+
     #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
         width: 100%;
-     margin: -70px;
+     margin: 0px;
     }
     #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
-       
-        padding-bottom: 100px;
+           gap: 8px;
+        padding-bottom: 20px;
     }
        #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block p.hero-subtext {
         font-size: 16px;
         line-height: 20px;
     }
+  #{{section.id}} .bundle-btn {
+    padding: 8px 20px;
+    font-size: 15px;
+ }
+
+
+
+
+
+
+#{{section.id}} .page-width {
+    padding: 0 2rem;
+}
   }
 
 
 
 
+@media (max-width: 450px) {
+
+
+    #{{section.id}} .content_block {
+        width: 100% !important;
+    }
+}
+
+
+@media (max-width: 400px) {
+
+
+
+
+         #{{section.id}} .image_text {
+            margin-top: -180px;
+        }
+}
+
+
+
+
+@media (max-width: 380px) {
+
+
+ #{{section.id}}.custom_nav_banner .page_warpper .image_text .content_block {
+         padding-bottom: 0px!important;
+}
+
+
+        #{{section.id}} .image_text {
+            margin-top: -170px;
+        }
+}
 
 
   #{{section.id}}.custom_nav_banner {
@@ -495,11 +635,6 @@ width:85% !important;
 }
 
 
-/* Content above overlay */
-#{{section.id}}.custom_nav_banner .page-width {
-    position: relative;
-    z-index: 2;
-}
 
 
   </style>
